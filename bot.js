@@ -4,7 +4,10 @@ const fs = require("fs");
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_API, {polling:true})
 const User = require("./db/user")
 const Chat = require("./db/chat");
-const users = 0
+
+const express = require("express");
+const fetch = require("node-fetch"); // or axios if you prefer
+const app = express();
 
 fs.readdirSync("./commands").forEach((file)=>{
 if (file.endsWith(".js")) require(`./commands/${file}`) (bot)
@@ -52,5 +55,29 @@ if (!chat){
     console.log(err)
 }
 })
+
+
+// 1. Simple endpoint to respond to pings
+app.get("/", (req, res) => {
+  res.send("Bot is running ✅");
+});
+
+// 2. Start server on Render's PORT or default 3000
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Web server running on port ${PORT}`);
+});
+
+// 3. Self-ping every 25 minutes to keep Render awake
+const BOT_URL = process.env.BOT_URL; // set this to your Render URL in .env
+
+setInterval(async () => {
+  try {
+    await fetch(BOT_URL);
+    console.log("Self-ping successful ✅");
+  } catch (err) {
+    console.error("Self-ping failed ❌", err);
+  }
+}, 25 * 60 * 1000); // 25 minutes
 
 bot.on("polling_error",(err)=> console.log("Polling Error",err.message))
