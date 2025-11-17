@@ -49,6 +49,8 @@ Command Count: ${count}
 Bot is running for ${days}Days ${hrs}Hours ${mins}Minutes and ${secs}Seconds
 
 💬 Chat Overview
+Total Users: ${chatInfo.length}
+__________________________
 ${chatInfo.join("\n")}
 
 ====================

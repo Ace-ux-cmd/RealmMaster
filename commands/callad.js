@@ -4,7 +4,7 @@ module.exports = (bot)=>{
             reply_to_message_id: msg.message_id,
         reply_markup:{
             inline_keyboard:[
-                [{text: "Message I҈t҈a҈c҈h҈i҈'", url:"https://t.me/aceuchiha100"}],
+                [{text: "Message Elvis", url:"https://t.me/chidalumb100"}],
                 [{text: "Message Ace'", url:"https://t.me/elvismb10"}],
             ]
         }

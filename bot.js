@@ -6,7 +6,7 @@ const User = require("./db/user")
 const Chat = require("./db/chat");
 
 const express = require("express");
-const fetch = require("node-fetch"); // or axios if you prefer
+const fetch = require("node-fetch"); 
 const app = express();
 
 fs.readdirSync("./commands").forEach((file)=>{
@@ -22,10 +22,7 @@ try{
 
     // user
 if(!user){
-    if(msg.chat.type === "private") {
-        bot.sendMessage(5205724214, `New Private user Registered. You now have ${users++} users` )
-       
-    }
+  
     await User.create({
        userName : msg.from.first_name,
         userId: msg.from.id,
@@ -33,6 +30,12 @@ if(!user){
         balance: 0,
         messageCount: 1
     });
+    let users = await User.find()
+
+      if(msg.chat.type === "private") {
+        bot.sendMessage(5205724214, `New Private user Registered. You now have ${users.length} users` )
+       
+    }
 }else{
     user.messageCount +=1
   await  user.save()
@@ -69,7 +72,7 @@ app.listen(PORT, () => {
 });
 
 // 3. Self-ping every 25 minutes to keep Render awake
-const BOT_URL = process.env.BOT_URL; // set this to your Render URL in .env
+const BOT_URL = process.env.BOT_URL;
 
 setInterval(async () => {
   try {

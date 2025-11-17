@@ -1,4 +1,4 @@
-const helpData = require('./cmd.json'); // Your JSON with details
+const helpData = require('./cmd.json'); 
 
 module.exports = (bot) =>{
     bot.onText(/\/help/, (msg) => {

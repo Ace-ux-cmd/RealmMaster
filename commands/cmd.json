@@ -31,6 +31,9 @@
     "start": {
       "details": "Begin interacting with the bot."
     },
+    "support": {
+      "details": "Get help, report bugs, or ask questions by joining the official support group for the bot."
+    },
     "count": {
       "details": "Shows your total messages to the bot."
     },
