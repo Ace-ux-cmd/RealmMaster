@@ -6,8 +6,9 @@ RealmMaster is a full-featured Telegram bot with games, economy, utilities, and 
 Designed for group and private chats, it’s fully interactive and easy to use.
 
 _______________________________________________
-*Features*
-🎮 Games / Fun
+Features
+
+*🎮 Games / Fun*
 
 - /quiz – Test your knowledge with random quizzes
 
@@ -19,7 +20,7 @@ _______________________________________________
 
 - /truthordare – Fun Truth or Dare challenges
 
-💰 Economy
+*💰 Economy*
 
 - /balance – Check your balance
 
@@ -29,7 +30,7 @@ _______________________________________________
 
 - /rank – View leaderboard and ranking
 
-💬 Utility
+*💬 Utility*
 
 - /gpt – Ask GPT anything
 
@@ -43,7 +44,7 @@ _______________________________________________
 
 - /start – Start or initialize the bot
 
-🛡️ Admin / Notifications
+*🛡️ Admin / Notifications*
 
 - /notification – Send system or admin notifications
 
@@ -53,55 +54,72 @@ _______________________________________________
 
 - /welcome – Automatically greet new users
 
-🤖 Bot Info / Control
+*🤖 Bot Info / Control*
 
 - /bot – View bot status, uptime, and info
 
-######Installation / Setup
 
-Clone the repository
+_______________________________________
 
-git clone https://github.com/yourusername/RealmMasterBot.git
-cd RealmMasterBot
+# Installation / Setup #
+
+> Clone the repository
+
+```git clone ```
+```https://github.com/yourusername/RealmMasterBot.git```
+```cd RealmMasterBot```
+
+> Install dependencies
+
+```npm install```
 
 
-Install dependencies
-
-npm install
-
-
-Setup environment variables
+> Setup environment variables
 
 Create a .env file in the root directory:
 
-BOT_TOKEN=your_telegram_bot_token
-MONGO_URI=your_mongodb_connection_string
+```BOT_TOKEN=your_telegram_bot_token```
+```MONGO_URI=your_mongodb_connection_string```
 
 
-Run the bot
+> Run the bot
 
-node bot.js
+```node bot.js```
+_________________________________________________
 
-Database
+ # Database #
 
 Uses MongoDB Atlas for storing users, balances, scores, message counts, and quiz history.
 
 Each user is created automatically on first interaction or when joining a group.
+____________________________________________________
 
-Commands Overview
+# Commands Overview #
 
-/help – Displays all commands grouped by category
+> /help – Displays all commands grouped by category
 
-Interactive buttons allow users to navigate and explore commands easily.
+> Interactive buttons allow users to navigate and explore commands easily.
+______________________________________________
 
-Contributing
+# Contributing #
 
-Fork the repository
+> Fork the repository
 
-Make your changes
+> Make your changes
 
-Submit a pull request
+> Submit a pull request
+________________________________________________
 
-License
+# Contact / Support #
+
+If you have questions, suggestions, or need help:
+
+*Telegram:* https:/t.me/chidalumb100
+
+*Email*: elvismbonu100@gmail.com
+
+_________________________________________________
+
+# License #
 
 MIT License
