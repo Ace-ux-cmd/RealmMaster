@@ -4,7 +4,9 @@ const fs = require("fs");
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_API, {polling:true})
 const User = require("./db/user")
 const Chat = require("./db/chat");
-
+const path = require("path")
+const response = fs.readFileSync(path.join("storage/chat.json"), "utf8")
+const chat_response = JSON.parse(response);
 const express = require("express");
 const fetch = require("node-fetch"); 
 const app = express();
@@ -13,6 +15,14 @@ fs.readdirSync("./commands").forEach((file)=>{
 if (file.endsWith(".js")) require(`./commands/${file}`) (bot)
 });
 
+
+// ✅ Generate Random Delay (5-10 seconds)
+function getRandomDelay() {
+    return Math.floor(Math.random() * 6 + 5) * 1000; // Random delay between 5000ms (5s) - 10000ms (10s)
+}
+
+
+
 bot.on("message", async(msg)=>{
 console.log(msg)
 try{
@@ -20,7 +30,7 @@ try{
     let user = await User.findOne({userId: msg.from.id})
     let chat = await Chat.findOne({chatId: msg.chat.id})
 
-    // user
+    // Access user from db
 if(!user){
   
     await User.create({
@@ -41,8 +51,7 @@ if(!user){
   await  user.save()
 }
 
-// Chat
-
+// Access chat from db
 if (!chat){
     await Chat.create({
         chatName: msg.chat.title|| msg.chat.first_name,
@@ -54,6 +63,23 @@ if (!chat){
     chat.totalMessages += 1
     await chat.save()
 }
+
+// Inline chat 
+
+ // ✅ Show Typing Indicator with Random Delay
+    const typingDelay = getRandomDelay();
+    bot.sendChatAction(msg.chat.id, "typing");
+
+
+if(chat.inlineChat){
+  if(msg.text.includes("/")) return;
+   // ✅ Wait after typing ends before sending response
+            setTimeout(() => {
+               bot.sendMessage(msg.chat.id, `${chat_response[Math.floor(Math.random()*chat_response.length)]}`, {reply_to_message_id : msg.message_id})
+            }, typingDelay);
+             
+            }
+
 }catch(err){
     console.log(err)
 }
