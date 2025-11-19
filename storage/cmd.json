@@ -1,5 +1,5 @@
 {
-  "Games": {
+  "Fun & Games": {
     "quiz": {
       "details": "You will be asked a random question. Reply with the correct option to earn points."
     },
@@ -18,10 +18,10 @@
   },
   "Economy": {
     "balance": {
-      "details": "View your current coin balance."
+      "details": "Display balance leaderboard or view your current coin balance."
     },
     "bank": {
-      "details": "Shows top users by balance."
+      "details": "Preform transactions."
     },
     "daily": {
       "details": "Get coins once daily"

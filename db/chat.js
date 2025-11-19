@@ -17,6 +17,9 @@ const chatSchema = new mongoose.Schema({
     },
     totalMessages:{
         type : Number
+    },
+    inlineChat : {
+        type : Boolean
     }
 });
 
