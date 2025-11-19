@@ -8,21 +8,21 @@ let hrs =0
 let days =0
    // Time settings
   setInterval(()=>{
-    if(secs >= 60){
+secs++
+if(secs >= 60){
     secs = 0
     mins++
-}else{
-    secs++
 }
 if(mins >= 60){
-    mins =0
+    mins = 0
     hrs++
 }
-if (hrs >= 24){
-    hrs=0
+if(hrs >= 24){
+    hrs = 0
     days++
 }
-},1000)
+  },1000)
+
 
 //count all commands
     require("fs").readdirSync("./commands").forEach((file)=>{
