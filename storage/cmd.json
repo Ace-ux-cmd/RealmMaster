@@ -14,9 +14,6 @@
     },
     "joke": {
       "details": "The bot will send a funny joke."
-    },
-    "chat": {
-      "details": "Toggles on/off bot inline chat"
     }
   },
   "Economy": {
@@ -54,6 +51,9 @@
     },
     "gpt": {
       "details": "Interact with AI for responses."
+    },
+    "chat": {
+      "details": "Toggles on/off bot inline chat"
     }
   },
   "Admin": {

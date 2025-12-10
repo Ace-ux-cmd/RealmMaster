@@ -24,7 +24,6 @@ function getRandomDelay() {
 
 
 bot.on("message", async(msg)=>{
-console.log(msg)
 try{
     // DB setup
     let user = await User.findOne({userId: msg.from.id})
@@ -66,13 +65,14 @@ if (!chat){
 
 // Inline chat 
 
+
+if(chat.inlineChat){
+  if(msg.text.includes("/")) return;
+
  // ✅ Show Typing Indicator with Random Delay
     const typingDelay = getRandomDelay();
     bot.sendChatAction(msg.chat.id, "typing");
 
-
-if(chat.inlineChat){
-  if(msg.text.includes("/")) return;
    // ✅ Wait after typing ends before sending response
             setTimeout(() => {
                bot.sendMessage(msg.chat.id, `${chat_response[Math.floor(Math.random()*chat_response.length)]}`, {reply_to_message_id : msg.message_id})

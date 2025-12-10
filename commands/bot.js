@@ -6,6 +6,7 @@ let secs = 0
 let mins =0
 let hrs =0
 let days =0
+
    // Time settings
   setInterval(()=>{
 secs++
