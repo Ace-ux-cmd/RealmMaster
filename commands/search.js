@@ -1,5 +1,4 @@
-require("dotenv").config()
-    const axios = require('axios');
+const axios = require('axios');
 
 module.exports = (bot) =>{
 bot.onText(/\/search/, async(msg)=>{

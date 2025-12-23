@@ -1,8 +1,8 @@
 const Chat = require("../db/chat")
 const fs = require ("fs");
 const path = require("path")
-const response = fs.readFileSync(path.join(__dirname, "../storage/greeting.json"), "utf8")
-const greeting_response = JSON.parse(response)
+const response = fs.readFileSync(path.join(__dirname, "../greeting.json"), "utf8")
+const data = JSON.parse(response)
 
 module.exports = bot =>{
     // Toggle chat on/off
@@ -20,7 +20,7 @@ module.exports = bot =>{
             }else{
                 chat.inlineChat = true
                 await chat.save()
-                 bot.sendMessage(msg.chat.id,`${greeting_response[Math.floor(Math.random()*greeting_response.length)]}`)
+                 bot.sendMessage(msg.chat.id,`${data[Math.floor(Math.random()*data.length)]}`)
             }
         } catch (err) {
               bot.sendMessage(

@@ -1,29 +1,10 @@
 const Chat = require("../db/chat");
+const User = require("../db/user");
+let uptime = (new Date()).toLocaleString();
+
 let count = 0
 let  chatInfo;
 let message;
-let secs = 0
-let mins =0
-let hrs =0
-let days =0
-
-   // Time settings
-  setInterval(()=>{
-secs++
-if(secs >= 60){
-    secs = 0
-    mins++
-}
-if(mins >= 60){
-    mins = 0
-    hrs++
-}
-if(hrs >= 24){
-    hrs = 0
-    days++
-}
-  },1000)
-
 
 //count all commands
     require("fs").readdirSync("./commands").forEach((file)=>{
@@ -31,10 +12,11 @@ if(hrs >= 24){
       })
 module.exports = (bot) =>{
     bot.onText(/\/bot/,async(msg)=>{
-if(msg.from.id === 5205724214 ){
+if(msg.from.id == process.env.BOT_OWNER_ID ){
  
 
     const chat = await Chat.find();
+    const user = await User.find();
     // Map through each messages and retun their values
    if(chat){
  chatInfo = chat.map(n=> `ChatName: ${n.chatName}, chatId: ${n.chatId}, chatType: ${n.chatType}, totalMessages: ${n.totalMessages}.\n`)
@@ -47,11 +29,12 @@ Status: 🟢 Online
 Command Count: ${count}
 
 ⚙️UPTIME⚙️
-Bot is running for ${days}Days ${hrs}Hours ${mins}Minutes and ${secs}Seconds
+Bot has been running since ${uptime}
 
 💬 Chat Overview
-Total Users: ${chatInfo.length}
-__________________________
+👥 Current Users: ${user.length}
+
+Current Chats: \n
 ${chatInfo.join("\n")}
 
 ====================
