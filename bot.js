@@ -1,27 +1,78 @@
 require("dotenv").config()
 const TelegramBot = require("node-telegram-bot-api")
 const fs = require("fs");
+const {OpenAI} = require("openai");
+const openai = new OpenAI({apiKey: process.env.OPENAI_API_KEY});
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_API, {polling:true})
 const User = require("./db/user")
 const Chat = require("./db/chat");
 const path = require("path")
-const response = fs.readFileSync(path.join("storage/chat.json"), "utf8")
-const chat_response = JSON.parse(response);
 const express = require("express");
 const fetch = require("node-fetch"); 
 const app = express();
+const profile = fs.readFileSync("profile.txt", "utf8");
+let botResponse = null;
+const queue = [];
+let isProcessing;
+
+// System prompt
+let system =`Do not offer help, or structure replies like a service. Avoid formal or “AI-style” language entirely like emdashes or hyphens.
+Speak casually, with human conversational rhythm. Be sharp, opinionated and consistent with your profile.
+Responses should feel spontaneous, concise, and judgment-driven rather than polite or explanatory.`+ profile
+
+// Generate random delay
+const randomDelay =()=> Math.floor(Math.random()*5+ 3)*1000;
 
 fs.readdirSync("./commands").forEach((file)=>{
 if (file.endsWith(".js")) require(`./commands/${file}`) (bot)
 });
 
+async function userResponse(){
+    // Checks if queue is busy and there is a user before Starting request
+    if(isProcessing) return;
+isProcessing = true;
 
-// ✅ Generate Random Delay (5-10 seconds)
-function getRandomDelay() {
-    return Math.floor(Math.random() * 6 + 5) * 1000; // Random delay between 5000ms (5s) - 10000ms (10s)
+while(queue.length > 0 ){
+ // Removes a user from the list and begins request
+    let currentUser = queue.shift();
+    // Show "typing" delay While waiting for request to be sent in xseconds
+    bot.sendChatAction(currentUser.userId, "typing");
+
+
+    await new Promise (r => setTimeout(r, randomDelay()))
+    
+
+    try {
+        const responses = await openai.responses.create({
+        model: "gpt-4o-mini",
+        instructions: ` This user's name is ${currentUser.username}. Do not lose or change this name.
+        ${system}, If you were asked something you forgot, Create an understandable human like excuse.
+        Don't give full info about yorself rather laugh it off`,
+        input: [
+            {role: "assistant", content: botResponse || "new chat"},
+            {role: "user", content: currentUser.message}
+        ],
+    })
+    botResponse = responses.output_text
+    
+  bot.sendMessage(currentUser.userId, responses.output_text, {reply_to_message_id: currentUser.msgId})
+    } catch (e) {
+        
+        if(!currentUser.retry){
+            bot.sendMessage(currentUser.userId, "I’ve just run into a short limit on my side. Mind if we continue in a moment?");
+        bot.sendMessage(process.env.BOT_OWNER_ID, `I experienced an error: ${e.message}`);
+queue.push(currentUser);
+            currentUser.retry = true
+        }else{
+            bot.sendMessage(currentUser.userId, "I'm kinda busy right now, If i'm unavailable in 10 minutes, contact my admin");
+        bot.sendMessage(process.env.BOT_OWNER_ID, `Error Not resolved`);
+        }
+    };
+
+    // Finish current session and restarts the process after clearing all pending tasks
+    isProcessing = false
+    }
 }
-
-
 
 bot.on("message", async(msg)=>{
 try{
@@ -42,7 +93,7 @@ if(!user){
     let users = await User.find()
 
       if(msg.chat.type === "private") {
-        bot.sendMessage(5205724214, `New Private user Registered. You now have ${users.length} users` )
+        bot.sendMessage(process.env.BOT_OWNER_ID, `New Private user Registered. You now have ${users.length} users` )
        
     }
 }else{
@@ -56,7 +107,8 @@ if (!chat){
         chatName: msg.chat.title|| msg.chat.first_name,
         chatId: msg.chat.id,
         chatType: msg.chat.type,
-        totalMessages:1
+        totalMessages:1,
+        lastInterracted : Date.now()
     })
 }else{
     chat.totalMessages += 1
@@ -64,23 +116,39 @@ if (!chat){
 }
 
 // Inline chat 
-
-
 if(chat.inlineChat){
-  if(msg.text.includes("/")) return;
+  
+  //  Ignore commands
+    if (msg.text && msg.text.startsWith("/")) return;
 
- // ✅ Show Typing Indicator with Random Delay
-    const typingDelay = getRandomDelay();
-    bot.sendChatAction(msg.chat.id, "typing");
 
-   // ✅ Wait after typing ends before sending response
-            setTimeout(() => {
-               bot.sendMessage(msg.chat.id, `${chat_response[Math.floor(Math.random()*chat_response.length)]}`, {reply_to_message_id : msg.message_id})
-            }, typingDelay);
-             
-            }
+    //  Handle different media types
+    if (msg.sticker) return bot.sendMessage(msg.chat.id, "A sticker huh? Try using an emoji instead 🥲");
+    if (msg.photo) return bot.sendMessage(msg.chat.id, "I can't see images right now 😐! Wanna describe it? 🥹");
+    if (msg.video) return bot.sendMessage(msg.chat.id, "A video? Tell me about it! 🤩");
+    if (msg.voice) return bot.sendMessage(msg.chat.id, "I can't hear you! Type it out for me 😅");
+    if (!msg.text) return;
+  
+  
+        // Create queue to handle multiple requests
+    let pending = {
+        msgId: msg.message_id,
+        userId: msg.chat.id,
+        username: msg.from.first_name,
+        message: msg.text
+    }
 
-}catch(err){
+     if (pending.userId == process.env.BOT_OWNER_ID) {
+        system += " You are talking to your creator, Be playful but respectful towards them."
+        queue.unshift(pending)
+    }else{
+    queue.push(pending);
+}
+    userResponse()
+  
+  }
+
+    }catch(err){
     console.log(err)
 }
 })
